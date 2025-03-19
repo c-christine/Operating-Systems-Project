@@ -3,8 +3,8 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include <format>
 #include <cctype>
+#include <algorithm>
 
 struct Process {
     int pid;
