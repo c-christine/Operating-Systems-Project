@@ -72,6 +72,13 @@ void sjfScheduling(std::vector<Process> &processes) {
                 }
             }
         }
+
+        if (index == -1) { // Ensures loop continues even if no process arrives
+            current_cpu_time++;
+            continue;
+        }
+        
+
         processes[index].waiting_time = current_cpu_time - processes[index].arrival_time; 
         processes[index].turnaround_time = processes[index].waiting_time + processes[index].burst_time; 
 
