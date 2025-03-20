@@ -66,16 +66,19 @@ void sjfScheduling(std::vector<Process> &processes) {
         
         
         for (size_t i = 0; i < processes.size(); i++) { // Finds the shortest job available
-            if (!done[i] && processes[i].arrival_time <= current_cpu_time) { // Finds an unfinished process that has
+            if (!done[i] && processes[i].arrival_time <= current_cpu_time) { // Finds an unfinished process that has arrived
                 if (index == -1 || processes[i].burst_time < processes[index].burst_time) { // Assigns first available process i
                     index = i;
                 }
             }
         }
+        processes[index].waiting_time = current_cpu_time - processes[index].arrival_time; 
+        processes[index].turnaround_time = processes[index].waiting_time + processes[index].burst_time; 
 
-
+        current_cpu_time += processes[index].burst_time;
+        done[index] = true;
+        completed++;
     }
-    std::vector<bool> done(processes.size(), false);
 }
 
 void fcfs(std::vector<Process> &processes){
