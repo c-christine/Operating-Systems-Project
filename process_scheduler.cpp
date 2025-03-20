@@ -4,12 +4,15 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <algorithm>
 
 struct Process {
     int pid;
     int arrival_time;
     int burst_time;
     int priority;
+    int waiting_time;
+    int turnaround_time;
 };
 
 std::vector<Process> readProcesses(const std::string &filename) {
@@ -48,14 +51,48 @@ std::vector<Process> readProcesses(const std::string &filename) {
     return processes;
 }
 
-void printProcesses(const std::vector<Process>& processes) { //Prints out header and list of processes
-    std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\n";
-    for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
-        std::cout << it->pid << "\t" 
-                  << it->arrival_time << "\t\t" 
-                  << it->burst_time << "\t\t" 
-                  << it->priority << "\n";
-    }    
+void printProcesses(const std::vector<Process>& processes, int para) { //Prints out header and list of processes
+    
+    if (para == 0) {
+        std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\n";
+        for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
+            std::cout << it->pid << "\t" 
+                    << it->arrival_time << "\t\t" 
+                    << it->burst_time << "\t\t" 
+                    << it->priority << "\n";
+        }
+    } else {
+        std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\tWaiting_Time\tTurnaround_Time\n";
+        for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
+            std::cout << it->pid << "\t" 
+                    << it->arrival_time << "\t\t" 
+                    << it->burst_time << "\t\t" 
+                    << it->priority << "\t\t"
+                    << it->waiting_time << "\t\t"
+                    << it->turnaround_time << "\n";
+        }    
+    } 
+} 
+
+void fcfs(std::vector<Process> &processes){
+    std::sort(processes.begin(), processes.end(), [](const Process &a, const Process &b) {
+        return a.arrival_time < b.arrival_time;
+    });
+
+    int current_time = 0;
+
+    for(size_t i = 0; i < processes.size(); i++){
+        if(current_time < processes[i].arrival_time){
+            current_time = processes[i].arrival_time;
+        }
+
+        processes[i].waiting_time = current_time - processes[i].arrival_time;
+
+        processes[i].turnaround_time = processes[i].waiting_time + processes[i].burst_time;
+
+        current_time += processes[i].burst_time;
+        
+    }
 }
 
 int main() {
@@ -63,7 +100,10 @@ int main() {
     std::vector<Process> processes = readProcesses(filename); // stores parced file into process
 
     if (!processes.empty()) { // check if any processes exist 
-        printProcesses(processes);
+        printProcesses(processes, 0);
+        std::vector<Process> fcfsList = processes; // creates a copy for fcfs
+        fcfs(fcfsList);
+        printProcesses(fcfsList, 1);
     } else {
         std::cerr << "No processes loaded or an error occurred." << std::endl;
     }
