@@ -101,8 +101,9 @@ int main() {
 
     if (!processes.empty()) { // check if any processes exist 
         printProcesses(processes, 0);
-        fcfs(processes);
-        printProcesses(processes, 1);
+        std::vector<Process> fcfsList = processes; // creates a copy for fcfs
+        fcfs(fcfsList);
+        printProcesses(fcfsList, 1);
     } else {
         std::cerr << "No processes loaded or an error occurred." << std::endl;
     }
