@@ -61,6 +61,21 @@ void sjfScheduling(std::vector<Process> &processes) {
     int current_cpu_time = 0;
     int completed = 0;
     std::vector<bool> done(processes.size(), false);
+    while (completed < processes.size()) {
+        int index = -1;
+        
+        
+        for (size_t i = 0; i < processes.size(); i++) { // Finds the shortest job available
+            if (!done[i] && processes[i].arrival_time <= current_cpu_time) { // Finds an unfinished process that has
+                if (index == -1 || processes[i].burst_time < processes[index].burst_time) { // Assigns first available process i
+                    index = i;
+                }
+            }
+        }
+
+
+    }
+    std::vector<bool> done(processes.size(), false);
 }
 
 void fcfs(std::vector<Process> &processes){
