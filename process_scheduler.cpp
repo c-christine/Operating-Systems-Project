@@ -112,20 +112,24 @@ int main() {
     std::vector<Process> processes = readProcesses(filename); // stores parced file into process
 
     if (!processes.empty()) { // check if any processes exist 
-        std::cout << "Original\n\n";
+        std::cout << "Original\n";
         printProcesses(processes, 0);
+        std::cout << "\n";
+        
         std::vector<Process> fcfsList = processes; // creates a copy for fcfs
-        std::cout << "First Come First Serve\n\n";
+        std::cout << "First Come First Serve\n";
         fcfs(fcfsList);
         printProcesses(fcfsList, 1);
+        std::cout << "\n";
 
         std::vector<Process> sjfList = processes; // creates a copy for sjf
-        std::cout << "Shortest Job First\n\n";
+        std::cout << "Shortest Job First\n";
         sjfScheduling(sjfList);
         printProcesses(sjfList, 1);
+        std::cout << "\n";
 
     } else {
-        std::cerr << "No processes loaded or an error occurred." << std::endl;
+        std::cerr << "No processes loaded or an error occurred." << "\n";
     }
     
     return 0;
