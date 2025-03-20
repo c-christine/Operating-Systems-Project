@@ -11,6 +11,8 @@ struct Process {
     int arrival_time;
     int burst_time;
     int priority;
+    int waiting_time;
+    int turnaround_time;
 };
 
 bool compareArrivalTime(const Process &a, const Process &b) { // sort process by arrival time
@@ -53,10 +55,10 @@ std::vector<Process> readProcesses(const std::string &filename) {
     return processes;
 }
 
-void sjfScheduling(std::vector<Process> &sjf) {
-    std::sort(sjf.begin(), sjf.end(), compareArrivalTime);
+void sjfScheduling(std::vector<Process> &processes) {
+    std::sort(processes.begin(), processes.end(), compareArrivalTime);
 
-    int process_number = sjf.size();
+    int process_number = processes.size();
     std::vector<bool> done(process_number, false);
     int completed = 0;
     int current_time = 0;
@@ -65,9 +67,9 @@ void sjfScheduling(std::vector<Process> &sjf) {
         int min_burst = 100;
 
         for (int i = 0; i < process_number; i++) {
-            if (!done[i] && sjf[i].arrival_time <= current_time) {
-                if (sjf[i].burst_time < min_burst) {
-                    min_burst = sjf[i].burst_time;
+            if (!done[i] && processes[i].arrival_time <= current_time) {
+                if (processes[i].burst_time < min_burst) {
+                    min_burst = processes[i].burst_time;
                     index = i;
                 }
             }
@@ -75,26 +77,62 @@ void sjfScheduling(std::vector<Process> &sjf) {
     }
 }
 
+void fcfs(std::vector<Process> &processes){
+    std::sort(processes.begin(), processes.end(), compareArrivalTime);
 
-void printProcesses(const std::vector<Process>& processes) { //Prints out header and list of processes
-    std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\n";
-    for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
-        std::cout << it->pid << "\t" 
-                  << it->arrival_time << "\t\t" 
-                  << it->burst_time << "\t\t" 
-                  << it->priority << "\n";
-    }    
+    int current_time = 0;
+
+    for(size_t i = 0; i < processes.size(); i++){
+        if(current_time < processes[i].arrival_time){
+            current_time = processes[i].arrival_time;
+        }
+
+        processes[i].waiting_time = current_time - processes[i].arrival_time;
+
+        processes[i].turnaround_time = processes[i].waiting_time + processes[i].burst_time;
+
+        current_time += processes[i].burst_time;
+        
+    }
 }
+
+void printProcesses(const std::vector<Process>& processes, int para) { //Prints out header and list of processes
+    
+    if (para == 0) {
+        std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\n";
+        for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
+            std::cout << it->pid << "\t" 
+                    << it->arrival_time << "\t\t" 
+                    << it->burst_time << "\t\t" 
+                    << it->priority << "\n";
+        }
+    } else {
+        std::cout << "PID\tArrival_Time\tBurst_Time\tPriority\tWaiting_Time\tTurnaround_Time\n";
+        for (std::vector<Process>::const_iterator it = processes.begin(); it != processes.end(); ++it) {
+            std::cout << it->pid << "\t" 
+                    << it->arrival_time << "\t\t" 
+                    << it->burst_time << "\t\t" 
+                    << it->priority << "\t\t"
+                    << it->waiting_time << "\t\t"
+                    << it->turnaround_time << "\n";
+        }    
+    } 
+} 
+
+
 
 int main() {
     const std::string filename = "processes.txt";
     std::vector<Process> processes = readProcesses(filename); // stores parced file into process
 
     if (!processes.empty()) { // check if any processes exist 
-        printProcesses(processes);
+        printProcesses(processes, 0);
+        std::vector<Process> fcfsList = processes; // creates a copy for fcfs
+        fcfs(fcfsList);
+        printProcesses(fcfsList, 1);
 
-        std::vector<Process> sjfList = processes; // creates a copy for sjf
-        sjfScheduling(sjfList);
+        // std::vector<Process> sjfList = processes; // creates a copy for sjf
+        // sjfScheduling(sjfList);
 
     } else {
         std::cerr << "No processes loaded or an error occurred." << std::endl;
