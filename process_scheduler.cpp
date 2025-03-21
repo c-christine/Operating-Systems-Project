@@ -61,6 +61,8 @@ void sjfScheduling(std::vector<Process> &processes) {
     int current_cpu_time = 0;
     int completed = 0;
     std::vector<bool> done(processes.size(), false);
+    std::vector<Process> execution_order; // Stores final execution order
+
     while (completed < processes.size()) {
         int index = -1;
         
@@ -81,13 +83,17 @@ void sjfScheduling(std::vector<Process> &processes) {
         // Calculates wait time and turnaround time
         processes[index].waiting_time = current_cpu_time - processes[index].arrival_time; 
         processes[index].turnaround_time = processes[index].waiting_time + processes[index].burst_time; 
-
+        
+        execution_order.push_back(processes[index]); // Adds the process to the execution order
         current_cpu_time += processes[index].burst_time; // Advance current time by amount of cpu time used
 
         // Mark process as complete
         done[index] = true;
         completed++;
     }
+
+    // Replaces the original processes with the reordered execution order;
+    processes = execution_order;
 }
 
 void fcfs(std::vector<Process> &processes){
@@ -107,6 +113,46 @@ void fcfs(std::vector<Process> &processes){
         current_cpu_time += processes[i].burst_time;
         
     }
+}
+
+void displayGanttChart(const std::vector<Process>& processes) {
+    std::cout << "\nGantt Chart:\n";
+    // Prints the process IDs (PIDs) and bars
+    for (size_t i = 0; i < processes.size(); ++i) {
+        std::cout << "| P" << processes[i].pid << " ";
+    }
+    std::cout << "|\n";
+    
+    // Prints the timeline
+    int current_time = 0; // Initial time = 0
+    std::cout << current_time;
+    
+    for (size_t i = 0; i < processes.size(); ++i) {
+        int burst_time = processes[i].burst_time;
+        int num_spaces = 3 + std::to_string(burst_time).length(); // Spacing calculation
+        std::cout << std::string(num_spaces, ' ') << current_time + burst_time;
+        current_time += burst_time;
+    }
+    std::cout << "\n";
+}
+
+// Prints the averages of Waiting Time (WT) and Turnaround Time (TAT)
+void printAverages(const std::vector<Process>& processes) {
+    double total_waiting_time = 0;
+    double total_turnaround_time = 0;
+    
+    // Sums up the WT and TAT
+    for (const auto& proc : processes) {
+        total_waiting_time += proc.waiting_time;
+        total_turnaround_time += proc.turnaround_time;
+    }
+    
+    // Calculates the averages of WT and TAT
+    double avg_waiting_time = total_waiting_time / processes.size();
+    double avg_turnaround_time = total_turnaround_time / processes.size();
+    
+    std::cout << "Average Waiting Time (WT): " << avg_waiting_time << "\n";
+    std::cout << "Average Turnaround Time (TAT): " << avg_turnaround_time << "\n";
 }
 
 void printProcesses(const std::vector<Process>& processes, int para) { //Prints out header and list of processes
@@ -147,13 +193,15 @@ int main() {
         std::cout << "First Come First Serve\n";
         fcfs(fcfsList);
         printProcesses(fcfsList, 1);
-        std::cout << "\n";
+        displayGanttChart(fcfsList);
+        printAverages(fcfsList);
 
         std::vector<Process> sjfList = processes; // creates a copy for sjf
-        std::cout << "Shortest Job First\n";
+        std::cout << "\n\nShortest Job First\n";
         sjfScheduling(sjfList);
         printProcesses(sjfList, 1);
-        std::cout << "\n";
+        displayGanttChart(sjfList);
+        printAverages(sjfList);
 
     } else {
         std::cerr << "No processes loaded or an error occurred." << "\n";
