@@ -20,19 +20,19 @@ bool compareArrivalTime(const Process &a, const Process &b) { // sort process by
 }
 
 std::vector<Process> readProcesses(const std::string &filename) {
-    std::ifstream file(filename); //Opens the file with given name
-    std::vector<Process> processes; //Creates empty list
+    std::ifstream file(filename); // Opens the file with given name
+    std::vector<Process> processes; // Creates a dynamic empty list
 
     if (!file) { // Print Error is file can not open
-        std::cerr << "Error opening file '" << filename << "'." << std::endl;
+        std::cerr << "Error opening file '" << filename << "'." << "\n";
         return processes;
     }
 
-    std::string line; 
+    std::string line; // Stores each line of text
 
     
     
-    while (std::getline(file, line)) {
+    while (std::getline(file, line)) { // Reads line by line
         // Find the first character
         size_t start = line.find_first_not_of(" \t");
         if (start == std::string::npos) continue; // Skip blank lines
@@ -43,7 +43,7 @@ std::vector<Process> readProcesses(const std::string &filename) {
         }
     
 
-        std::istringstream iss(line.substr(start)); // Removes leading spaces
+        std::istringstream iss(line.substr(start)); // Removes leading spaces and converts string into stream
         Process proc;
         if (iss >> proc.pid >> proc.arrival_time >> proc.burst_time >> proc.priority) {
             processes.push_back(proc);
@@ -78,11 +78,13 @@ void sjfScheduling(std::vector<Process> &processes) {
             continue;
         }
         
-
+        // Calculates wait time and turnaround time
         processes[index].waiting_time = current_cpu_time - processes[index].arrival_time; 
         processes[index].turnaround_time = processes[index].waiting_time + processes[index].burst_time; 
 
-        current_cpu_time += processes[index].burst_time;
+        current_cpu_time += processes[index].burst_time; // Advance current time by amount of cpu time used
+
+        // Mark process as complete
         done[index] = true;
         completed++;
     }
