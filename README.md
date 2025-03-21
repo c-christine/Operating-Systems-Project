@@ -16,13 +16,13 @@
   
   3. Your program should read this file and store the data in memory.
 ### ✅Step 2: Implement Two Scheduling Algorithms
-  ✅ First-Come, First-Served (FCFS) → The first process that arrives runs first.
-  ✅ Shortest Job First (SJF) → The process with the smallest burst time runs first.
+  * First-Come, First-Served (FCFS) → The first process that arrives runs first.
+  * Shortest Job First (SJF) → The process with the smallest burst time runs first.
 
   Each algorithm:
-    ✔ Sorts the processes based on the algorithm's rule.
-    ✔ Simulates execution (decide which process runs at each step).
-    ✔ Calculates Waiting Time (WT) and Turnaround Time (TAT).
+    * Sorts the processes based on the algorithm's rule.
+    * Simulates execution (decide which process runs at each step).
+    * Calculates Waiting Time (WT) and Turnaround Time (TAT).
 ### ✅Step 3: Display a Gantt Chart (Execution Order)
   1. Program shows the order in which processes run.
   2. Displays a simple text-based Gantt chart in the console.
