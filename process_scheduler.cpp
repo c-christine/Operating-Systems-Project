@@ -97,19 +97,24 @@ void sjfScheduling(std::vector<Process> &processes) {
 }
 
 void fcfs(std::vector<Process> &processes){
+    //Sort processes based on arrival time
     std::sort(processes.begin(), processes.end(), compareArrivalTime);
 
-    int current_cpu_time = 0;
+    int current_cpu_time = 0;//tracks current time in cpu scheduling
 
     for(size_t i = 0; i < processes.size(); i++){
+        //if cpu is idle, moves to next process arrival time
         if(current_cpu_time < processes[i].arrival_time){
             current_cpu_time = processes[i].arrival_time;
         }
 
+        //calculate waiting time
         processes[i].waiting_time = current_cpu_time - processes[i].arrival_time;
 
+        //calculate turnaround time
         processes[i].turnaround_time = processes[i].waiting_time + processes[i].burst_time;
 
+        //update current cpu time by adding the burst time of running process
         current_cpu_time += processes[i].burst_time;
         
     }
